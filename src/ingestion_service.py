@@ -16,6 +16,18 @@ if __name__ == "__main__":
         r"C:\Users\rafae\Documents\Projetos\langchain-rag-gist\assets\mediumblog1.txt"
     )
 
+    # 1. Loading
     loader = UnstructuredLoader(file_path=file_path)
     document = loader.load()
+
+    # 2. Splitting
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    texts = text_splitter.split_documents(document)
+
+    # 3. Ingesting
+    embeddings = OpenAIEmbeddings(openai_api_type=os.environ["OPENAI_API_KEY"])
+    PineconeVectorStore.from_documents(
+        texts, embeddings, index_name=os.environ["INDEX_NAME"]
+    )
+
     print("Terminou")
