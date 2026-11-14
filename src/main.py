@@ -5,6 +5,10 @@ from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
+from operator import itemgetter
 
 load_dotenv()
 
@@ -35,8 +39,28 @@ def retrieval_chain_without_lcel(query: str):
     return response.content
 
 
+def retrieval_chain_with_lcel():
+    """This function is a placeholder for the implementation of the retrieval chain with LCEL."""
+    retrieval_chain = (
+        (
+            RunnablePassthrough.assign(
+                context=itemgetter("question") | retriever | _format_content
+            )
+        )
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    return retrieval_chain
+
+
 if __name__ == "__main__":
     question = "What is Pinecone in machine learning?"
     print("Implementation 1: Retrieval Chain without LCEL")
     result = retrieval_chain_without_lcel(question)
     print(result)
+
+    print("\nImplementation 2: Retrieval Chain with LCEL")
+    retrieval_chain = retrieval_chain_with_lcel()
+    result_with_lcel = retrieval_chain.invoke({"question": question})
+    print(result_with_lcel)

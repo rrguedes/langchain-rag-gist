@@ -1,5 +1,7 @@
 {
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
-    }
+    },
+    "robotcode.disableExtension": true,
+    "python.terminal.useEnvFile": true
 }
